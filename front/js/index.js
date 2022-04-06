@@ -12,24 +12,30 @@ const fetchKanapé = async () => {
 const kanapéDisplay = async () => {
   await fetchKanapé();
 
-  document.getElementById("items").innerHTML = kanapéData
+   document.getElementById("items").innerHTML = kanapéData
     .map(
-      (kanapé) => `
+      (kanapé) => `      
 
-        <a href="./product.html?id=42">
+        <a href="./product.html?${kanapé._id}">
           <article>
-            <img src="${kanapé.imageUrl}" alt="image de kanapé type ${
-              kanapé.name
+            <img src="${kanapé.imageUrl}" alt="${
+              kanapé.altTxt
             }"/>
               <h3 class="productName">${kanapé.name.toUpperCase()}</h3>
               <p class="productDescription">${kanapé.description}</p>
           </article>
-      </a>
+        </a>
 
       `,
     )
     .join("");
-}
+    
+
+  let liens = document.querySelectorAll("#items > a");
+  console.log(liens);
+
+};
 
 
 kanapéDisplay();
+
