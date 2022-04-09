@@ -1,4 +1,6 @@
-const produit = window.location.search.split("?").join("");
+var str = window.location;
+var url = new URL(str);
+var produit = url.searchParams.get("id");
 console.log(produit);
 
 
@@ -23,7 +25,7 @@ const produitDisplay = async () => {
     document.querySelector("body > main > div > section > article > div.item__img").appendChild(a);
   }
   display_image(`${produitData.imageUrl}`,`${produitData.altTxt}`);
-  
+    
   document.getElementById("title").textContent = `${produitData.name}`;
 
   document.getElementById("price").textContent = `${produitData.price}`;

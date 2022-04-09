@@ -16,7 +16,7 @@ const kanapéDisplay = async () => {
     .map(
       (kanapé) => `      
 
-        <a href="./product.html?${kanapé._id}">
+        <a href="./product.html?id=${kanapé._id}">
           <article>
             <img src="${kanapé.imageUrl}" alt="${
               kanapé.altTxt
