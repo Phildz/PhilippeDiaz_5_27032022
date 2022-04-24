@@ -84,7 +84,7 @@ const ajoutPanier = (produitData) => {
 
     console.log(fusionDataProduit);
 
-    popupConfirmer();
+    //popupConfirmer();
 
     addBasket(fusionDataProduit, couleur, quantité);
 
