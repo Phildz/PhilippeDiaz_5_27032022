@@ -10,9 +10,7 @@ const panierDisplay = () => {
     const articlePosition = document.getElementById("cart__items"); 
     const totalQuantityPosition = document.getElementById("totalQuantity");
     const totalPricePosition = document.getElementById("totalPrice");
-    
-      
-
+ 
     let structurePagePanier = [];
     let structureQuantitéPrixTotal = [];
     let struturePrixTotal = [];
@@ -49,8 +47,9 @@ const panierDisplay = () => {
                     </div>
                 </div>
             </article>
-        `;       
-            
+        `;  
+
+        //let quantitéProduit = Number(produit[k].quantity);   
         structureQuantitéPrixTotal = quantitéTotale += Number(produit[k].quantity);
 
         
@@ -60,10 +59,11 @@ const panierDisplay = () => {
         }else{
             const numberPrix = Number(produit[k].price);
             struturePrixTotal = prixTotal += numberPrix; 
-        }
+        }      
         
     }   
-    removeProduct();    
+    removeProduct();
+    modifierQuantitéProduit();    
         
     if(k == produit.length) {
     //Injection html dans la page panier
@@ -87,6 +87,7 @@ const removeProduct = async (panierDisplay) => {
 
         let id_selection_suppression = produit[l]._id;
         let couleur_selection_suppression = produit[l].color;
+
         console.log("id_selection_suppression");
         console.log(id_selection_suppression);
         console.log("couleur_selection_suppression");
@@ -97,17 +98,57 @@ const removeProduct = async (panierDisplay) => {
         console.log(produit);
 
         saveBasket(produit);
-        window.location.href = "cart.html";
+        //window.location.href = "cart.html";
+
+        sommeTotale = getNumberProduit();
+        console.log("quantité totale :", sommeTotale);
+        document.querySelector("#totalQuantity").textContent = sommeTotale;
+
+        prixTotal = getTotalPrice();
+        console.log("quantité totale :", prixTotal);
+        document.querySelector("#totalPrice").textContent = prixTotal;
+
+        btn_supprimer[l].closest("article").remove();        
+
         })
     }
+}
 
 const modifierQuantitéProduit = async (panierDisplay) =>{
     await panierDisplay;
 
-    
-}
-    
-    
+    let quantitéTypeProduit = document.querySelectorAll(".itemQuantity");    
+
+    console.log(quantitéTypeProduit);
+
+    for (let m = 0; m < quantitéTypeProduit.length; m++){        
+
+        quantitéTypeProduit[m].addEventListener("change", (event) => {
+            event.preventDefault();
+
+            console.log("quantité article modifiée");
+
+            let newQuantité =  `${quantitéTypeProduit[m].value}`;
+            produit[m].quantity = newQuantité;
+            console.log(produit[m].quantity);
+            console.log(produit[m]);
+            quantitéTypeProduit.innerHTML = newQuantité;
+
+            saveBasket(produit);
+
+            sommeTotale = getNumberProduit();
+            console.log("quantité totale :", sommeTotale);
+            document.querySelector("#totalQuantity").textContent = sommeTotale;
+
+            prixTotal = getTotalPrice();
+            console.log("quantité totale :", prixTotal);
+            document.querySelector("#totalPrice").textContent = prixTotal;
+                      
+        });
+        
+           
+    } 
     return
 }
+
 panierDisplay();

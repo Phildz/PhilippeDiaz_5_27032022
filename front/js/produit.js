@@ -83,6 +83,7 @@ const ajoutPanier = (produitData) => {
     }
 
     console.log(fusionDataProduit);
+    window.location.href = `cart.html?id=${idProduit}`;
 
     //popupConfirmer();
 
