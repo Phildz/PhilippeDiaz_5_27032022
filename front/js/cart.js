@@ -1,12 +1,8 @@
 //Récupération de la variable produit dans le local
+let produit = getBasket();
 
-let produit = JSON.parse(localStorage.getItem("basket"));
-
-console.log(produit);
-
-const panierDisplay = () => {
-  //await fetchKanapé();
-  
+const panierDisplay = () => { 
+      
     const articlePosition = document.getElementById("cart__items"); 
     const totalQuantityPosition = document.getElementById("totalQuantity");
     const totalPricePosition = document.getElementById("totalPrice");
@@ -63,7 +59,8 @@ const panierDisplay = () => {
         
     }   
     removeProduct();
-    modifierQuantitéProduit();    
+    modifierQuantitéProduit();
+    renseignerFormulaire();       
         
     if(k == produit.length) {
     //Injection html dans la page panier
@@ -150,5 +147,113 @@ const modifierQuantitéProduit = async (panierDisplay) =>{
     } 
     return
 }
+
+const renseignerFormulaire = async (panierDisplay) => {
+    await panierDisplay;
+
+// -------------Validation des données du formulaire
+    let inputs = document.querySelectorAll("form input");
+    let divInputs = document.querySelectorAll("form div p");
+    //document.querySelector("#order").setAttribute("disabled", true);
+        
+    
+    for (let m = 0; m < inputs.length; m++){  
+        
+        inputs[m].addEventListener("change", function(champ) {
+            var valeurChamp = champ.target.value;
+            var nomChamp = inputs[m].name;
+        
+            console.log(valeurChamp);
+            console.log(nomChamp);
+
+            
+
+            if(nomChamp == inputs[0].name || nomChamp == inputs[1].name) {
+                console.log("champPrénomNom");
+                console.log(valeurChamp);
+                var validitéChamp = testPrénomNom(valeurChamp);
+                gestionMessageErreur(valeurChamp);
+            }else{
+                if(nomChamp == inputs[3].name){
+                    console.log("champVille");
+                    console.log(valeurChamp);
+                    var validitéChamp = testVille(valeurChamp);
+                    gestionMessageErreur(valeurChamp);
+                }else{
+                    if(nomChamp == inputs[2].name){
+                        console.log("champ adresse");
+                        console.log(valeurChamp);
+                        var validitéChamp = testAdresse(valeurChamp);
+                        gestionMessageErreur(); 
+                    }else{
+                        if(nomChamp == inputs[4].name){
+                            console.log("champ email");
+                            console.log(valeurChamp);
+                            var validitéChamp = testEmail(valeurChamp);
+                            gestionMessageErreur(valeurChamp);                    
+                        }else{
+                        console.log("bouton commander");
+                        }
+                    }
+                }                
+            }           
+
+            function gestionMessageErreur(input){
+            if (valeurChamp === "" || validitéChamp) {
+                //désactivationBtnCommander(false);
+                let message = "";
+                divInputs[m].innerHTML = message;  
+            }else{                     
+                let message = "Champ incorrect";                
+                divInputs[m].innerHTML = message;                
+                //désactivationBtnCommander(true);                               
+                }
+            }
+            
+            function testPrénomNom(input) {
+                let regex = /^[a-zA-Z]+$/i;
+                return regex.test(input);
+            }
+
+            function testEmail(input) {        
+                let regex = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i;
+                return regex.test(input);
+                }
+
+            function testVille(input){
+                let regex = /^[a-zA-Z]+\s[a-zA-Z]+$/i;
+                return regex.test(input);
+            }
+
+            function testAdresse(input) {
+                let regex = /^[0-9]+\s([a-zA-Z]+( [a-zA-Z]+)+)$/i;
+                return regex.test(input);
+            } 
+            // --------------Récupération des données du formulaire
+
+            const donnéesFormulaire = {
+                prénom : document.querySelector("#firstName").value,
+                nom : document.querySelector("#lastName").value,
+                adresse : document.querySelector("#address").value,
+                ville : document.querySelector("#city").value,
+                email :document.querySelector("#email").value
+                }
+            localStorage.setItem("donnéesFormulaire", JSON.stringify(donnéesFormulaire));
+
+            const donnéesAEnvoyer = {
+                donnéesFormulaire,
+                produit
+            }
+            console.log(donnéesAEnvoyer);
+        })
+    }
+
+
+
+// --------------Envoi du formulaire   
+   
+
+
+};
 
 panierDisplay();
