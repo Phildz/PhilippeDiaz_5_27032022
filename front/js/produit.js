@@ -1,8 +1,7 @@
-var str = window.location;
-var url = new URL(str);
-var idProduit = url.searchParams.get("id");
-//console.log(produit);
 
+//----Récupération data idProduit dans la fenêtre de navigation
+
+idProduit = getDataWindowLocation("id");
 
 let produitData = [];
 
@@ -16,47 +15,46 @@ const fetchProduit = async () => {
 };
 
 const produitDisplay = async () => {
-  await fetchProduit();
+  await fetchProduit();  
   
-  function display_image(src, alt) {
-    var a = document.createElement("img");
-    a.src = src;    
-    a.alt = alt;    
-    document.querySelector("body > main > div > section > article > div.item__img").appendChild(a);
+  affichageImage(`${produitData.imageUrl}`,`${produitData.altTxt}`);
+
+  afficherInfosTexte("title", "price", "description");
+
+  function afficherInfosTexte (title, price, description){
+    document.getElementById(title).textContent = `${produitData.name}`;
+    document.getElementById(price).textContent = `${produitData.price}`;
+    document.getElementById(description).textContent = `${produitData.description}`;
   }
-  display_image(`${produitData.imageUrl}`,`${produitData.altTxt}`);
-    
-  document.getElementById("title").textContent = `${produitData.name}`;
-
-  document.getElementById("price").textContent = `${produitData.price}`;
-
-  document.getElementById("description").textContent = `${produitData.description}`;
   
-  /**
-   * Création du code html Options dans Select en fonction de la longueur du tableau "colors"
-   * renvoie les options de choix "couleur" disponibles
-   */
-  let créerOption = () => {
-    var sel = document.getElementById("colors");
-    for (i=0; i < `${produitData.colors.length}`; i++){
-      var opt_i = document.createElement("option");
-      opt_i.value = `${produitData.colors[i]}`;
-      opt_i.text = `${produitData.colors[i]}`;
-      sel.add(opt_i, null);
-    }
-  }
+  
+  
   créerOption();
 
-  ajoutPanier(produitData);
-   
+  ajoutPanier(produitData);   
   
 };
 
-produitDisplay();
+function affichageImage(src, alt) {
+  var a = document.createElement("img");
+  a.src = src;    
+  a.alt = alt;    
+  document.querySelector("body > main > div > section > article > div.item__img").appendChild(a);
+}
 
-
-  
-
+/**
+   * Création du code html Options dans Select en fonction de la longueur du tableau "colors"
+   * renvoie les options de choix "couleur" disponibles
+   */
+const créerOption = () => {
+  var sel = document.getElementById("colors");
+  for (i=0; i < `${produitData.colors.length}`; i++){
+    var opt_i = document.createElement("option");
+    opt_i.value = `${produitData.colors[i]}`;
+    opt_i.text = `${produitData.colors[i]}`;
+    sel.add(opt_i, null);
+  }
+}
 
 const ajoutPanier = (produitData) => {  
   const btn_envoyerPanier = document.getElementById("addToCart");
@@ -72,30 +70,15 @@ const ajoutPanier = (produitData) => {
       quantity : quantité
     });
 
-    //fonction fenêtre pop up
-    const popupConfirmer = () => {
-      if(window.confirm(`${produitData.name} couleur: ${couleur}, nombre :${quantité} a bien été ajouté au panier
-      Consultez le panier OK ou revenir à l'accueil ANNULER`)){
-        window.location.href = `cart.html?id=${idProduit}`;
-      }else{
-        window.location.href = "index.html"
-      }
-    }
-
     console.log(fusionDataProduit);
     window.location.href = `cart.html?id=${idProduit}`;
 
-    //popupConfirmer();
-
-    addBasket(fusionDataProduit, couleur, quantité);
-
-
-    
+    addBasket(fusionDataProduit, couleur, quantité);    
 
   });
 
 };
 
-
+produitDisplay();
 
 

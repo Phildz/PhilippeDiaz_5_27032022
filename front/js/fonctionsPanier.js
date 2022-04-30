@@ -69,3 +69,9 @@ function getTotalPrice() {
     return total;
 }
 
+//----Récupération datas dans la fenêtre de navigation 
+function getDataWindowLocation (val){
+    var str = window.location;
+    var url = new URL(str);    
+    return url.searchParams.get(val);        
+}

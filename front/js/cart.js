@@ -79,23 +79,28 @@ const removeProduct = async (panierDisplay) => {
     for (let l = 0; l < btn_supprimer.length; l++){
         btn_supprimer[l].addEventListener("click", (event) => {
             event.preventDefault();
+        
+        console.log("l=", l);
+        console.log("article supprimé");
+        console.log("longueur tab=", btn_supprimer.length);
 
-            console.log("article supprimé");
+        //let id_selection_suppression = produit[l]._id;
+        //let couleur_selection_suppression = produit[l].color;
 
-        let id_selection_suppression = produit[l]._id;
-        let couleur_selection_suppression = produit[l].color;
+        //console.log("id_selection_suppression");
+        //console.log(id_selection_suppression);
+        //console.log("couleur_selection_suppression");
+       // console.log(couleur_selection_suppression);
 
-        console.log("id_selection_suppression");
-        console.log(id_selection_suppression);
-        console.log("couleur_selection_suppression");
-        console.log(couleur_selection_suppression);
-
-
-        produit = produit.filter(el => el._id !== id_selection_suppression || el.color !== couleur_selection_suppression);
-        console.log(produit);
-
+        if (produit.length >1){
+            produit = produit.filter(el => el._id !== produit[l]._id || el.color !== produit[l].color);        
+            console.log(produit);            
+        }else{
+            produit=[];            
+        }
         saveBasket(produit);
-        //window.location.href = "cart.html";
+
+        btn_supprimer[l].closest("article").remove();
 
         sommeTotale = getNumberProduit();
         console.log("quantité totale :", sommeTotale);
@@ -104,9 +109,6 @@ const removeProduct = async (panierDisplay) => {
         prixTotal = getTotalPrice();
         console.log("quantité totale :", prixTotal);
         document.querySelector("#totalPrice").textContent = prixTotal;
-
-        btn_supprimer[l].closest("article").remove();        
-
         })
     }
 }
@@ -231,7 +233,7 @@ const renseignerFormulaire = async (panierDisplay) => {
             } 
             // --------------Récupération des données du formulaire
 
-            const donnéesFormulaire = {
+            /*const donnéesFormulaire = {
                 prénom : document.querySelector("#firstName").value,
                 nom : document.querySelector("#lastName").value,
                 adresse : document.querySelector("#address").value,
@@ -245,15 +247,99 @@ const renseignerFormulaire = async (panierDisplay) => {
                 produit
             }
             console.log(donnéesAEnvoyer);
+
+            // --------------Envoi du formulaire 
+
+            document.querySelector("#order").addEventListener("click", transfert);
+            function transfert(){
+            window.location.href = "./confirmation.html?id=011111111";
+            }  */
         })
     }
-
-
-
-// --------------Envoi du formulaire   
-   
-
-
 };
+// --------------Envoi du formulaire 
+    document.addEventListener('submit', function(e){
+        e.preventDefault()
+
+        const btn_Commander = e.target;
+
+        const contact = {
+            firstName : document.querySelector("#firstName").value,
+            lastName : document.querySelector("#lastName").value,
+            address : document.querySelector("#address").value,
+            city : document.querySelector("#city").value,
+            email :document.querySelector("#email").value
+        }
+
+      
+        //Création d'un tableau d'id
+        let products = [];
+        for (n=0; n<produit.length; n++){
+            products[n] = produit[n]._id;
+        }
+        console.log(products);
+
+        localStorage.setItem("contact", JSON.stringify(contact));
+        
+        const donnéesAEnvoyer = {
+            contact,
+            products
+        }
+        console.log(donnéesAEnvoyer);
+
+        const promiseCommande = fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(donnéesAEnvoyer),
+        });
+
+        promiseCommande.then(async (response) => {
+            try {
+                console.log(response);
+                const contenu = await response.json();
+                console.log(contenu);
+                console.log(contenu.orderId);
+                window.location.href = `confirmation.html?orderId=${contenu.orderId}`;
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    })
+/*
+function send(e) {
+    e.preventDefault();
+    fetch("http://localhost:3000/api/products", {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(donnéesAEnvoyer),
+    })
+    .then(function(res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function(value) {
+
+        //<a href="./product.html?id=${kanapé._id}"></a>
+
+        window.location.href = "confirmation.html?id=${produit._id}";
+        document.getElementById("result").innerText = value.postData.text;
+    });
+  }*/
+  //console.log(produit._id);
+  
+  //document.getElementById("form").addEventListener("submit", transfert);
+  /*document.querySelector("#order").addEventListener("click", transfert);
+  function transfert(){
+    window.location.href = "./confirmation.html?id=011111111";  
+  }*/
+
+
 
 panierDisplay();
