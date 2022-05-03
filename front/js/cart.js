@@ -1,4 +1,4 @@
-//Récupération de la variable produit dans le local
+//Récupération de la variable produit dans le local storage
 let produit = getBasket();
 
 const panierDisplay = () => { 
@@ -14,8 +14,7 @@ const panierDisplay = () => {
     let prixTotal = 0;
     
     let texteSupprimer = "Supprimer";
-    let indexProduit = 0;
-     
+    let indexProduit = 0;     
 
     for(k=0; k < produit.length; k++) {   
         
@@ -57,10 +56,7 @@ const panierDisplay = () => {
             struturePrixTotal = prixTotal += numberPrix; 
         }      
         
-    }   
-    removeProduct();
-    modifierQuantitéProduit();
-    renseignerFormulaire();       
+    }          
         
     if(k == produit.length) {
     //Injection html dans la page panier
@@ -68,48 +64,37 @@ const panierDisplay = () => {
         totalQuantityPosition.innerHTML = structureQuantitéPrixTotal;
         totalPricePosition.innerHTML = struturePrixTotal;
     }
+    supprimerProduit();
+    modifierQuantitéProduit();
+    renseignerFormulaire();
+    envoyerFormulaire(); 
 }
 
-const removeProduct = async (panierDisplay) => {
-    await panierDisplay;
+const supprimerProduit = async (panierDisplay) => {
+    await panierDisplay; 
+    
+    deleteProduct();
 
+    function deleteProduct() {
     let btn_supprimer = document.querySelectorAll(".deleteItem");
-    console.log(btn_supprimer);
 
-    for (let l = 0; l < btn_supprimer.length; l++){
-        btn_supprimer[l].addEventListener("click", (event) => {
-            event.preventDefault();
-        
-        console.log("l=", l);
-        console.log("article supprimé");
-        console.log("longueur tab=", btn_supprimer.length);
+        for (let j = 0; j < btn_supprimer.length; j++){
+            btn_supprimer[j].addEventListener("click" , (event) => {
+                event.preventDefault();
 
-        //let id_selection_suppression = produit[l]._id;
-        //let couleur_selection_suppression = produit[l].color;
+                //Selection de l'element à supprimer en fonction de son id ET sa couleur
+                let idDelete = produit[j]._id;
+                let colorDelete = produit[j].color;
 
-        //console.log("id_selection_suppression");
-        //console.log(id_selection_suppression);
-        //console.log("couleur_selection_suppression");
-       // console.log(couleur_selection_suppression);
+                produit = produit.filter(el => el._id !== idDelete || el.color !== colorDelete);             
+                
+                localStorage.setItem("basket", JSON.stringify(produit));
 
-        if (produit.length >1){
-            produit = produit.filter(el => el._id !== produit[l]._id || el.color !== produit[l].color);        
-            console.log(produit);            
-        }else{
-            produit=[];            
+                //Alerte produit supprimé et refresh
+                alert("Ce produit va être supprimé du panier");
+                location.reload();
+            })
         }
-        saveBasket(produit);
-
-        btn_supprimer[l].closest("article").remove();
-
-        sommeTotale = getNumberProduit();
-        console.log("quantité totale :", sommeTotale);
-        document.querySelector("#totalQuantity").textContent = sommeTotale;
-
-        prixTotal = getTotalPrice();
-        console.log("quantité totale :", prixTotal);
-        document.querySelector("#totalPrice").textContent = prixTotal;
-        })
     }
 }
 
@@ -127,7 +112,7 @@ const modifierQuantitéProduit = async (panierDisplay) =>{
 
             console.log("quantité article modifiée");
 
-            let newQuantité =  `${quantitéTypeProduit[m].value}`;
+            let newQuantité = Number(`${quantitéTypeProduit[m].value}`);
             produit[m].quantity = newQuantité;
             console.log(produit[m].quantity);
             console.log(produit[m]);
@@ -135,18 +120,16 @@ const modifierQuantitéProduit = async (panierDisplay) =>{
 
             saveBasket(produit);
 
-            sommeTotale = getNumberProduit();
+            sommeTotale = calculNombreProduit();
             console.log("quantité totale :", sommeTotale);
             document.querySelector("#totalQuantity").textContent = sommeTotale;
 
-            prixTotal = getTotalPrice();
+            prixTotal = calculPrixTotal();
             console.log("quantité totale :", prixTotal);
             document.querySelector("#totalPrice").textContent = prixTotal;
                       
-        });
-        
-           
-    } 
+        });           
+    }
     return
 }
 
@@ -166,9 +149,7 @@ const renseignerFormulaire = async (panierDisplay) => {
             var nomChamp = inputs[m].name;
         
             console.log(valeurChamp);
-            console.log(nomChamp);
-
-            
+            console.log(nomChamp);            
 
             if(nomChamp == inputs[0].name || nomChamp == inputs[1].name) {
                 console.log("champPrénomNom");
@@ -230,39 +211,20 @@ const renseignerFormulaire = async (panierDisplay) => {
             function testAdresse(input) {
                 let regex = /^[0-9]+\s([a-zA-Z]+( [a-zA-Z]+)+)$/i;
                 return regex.test(input);
-            } 
-            // --------------Récupération des données du formulaire
-
-            /*const donnéesFormulaire = {
-                prénom : document.querySelector("#firstName").value,
-                nom : document.querySelector("#lastName").value,
-                adresse : document.querySelector("#address").value,
-                ville : document.querySelector("#city").value,
-                email :document.querySelector("#email").value
-                }
-            localStorage.setItem("donnéesFormulaire", JSON.stringify(donnéesFormulaire));
-
-            const donnéesAEnvoyer = {
-                donnéesFormulaire,
-                produit
-            }
-            console.log(donnéesAEnvoyer);
-
-            // --------------Envoi du formulaire 
-
-            document.querySelector("#order").addEventListener("click", transfert);
-            function transfert(){
-            window.location.href = "./confirmation.html?id=011111111";
-            }  */
+            }             
         })
     }
-};
-// --------------Envoi du formulaire 
-    document.addEventListener('submit', function(e){
-        e.preventDefault()
+}
 
-        const btn_Commander = e.target;
+const envoyerFormulaire = async (panierDisplay) => {
 
+    document.addEventListener('submit', envoyerFormulaire);
+    function envoyerFormulaire(e){
+        e.preventDefault();
+
+        //const btn_Commander = e.target;
+
+        //Création d'un objet de données
         const contact = {
             firstName : document.querySelector("#firstName").value,
             lastName : document.querySelector("#lastName").value,
@@ -270,11 +232,10 @@ const renseignerFormulaire = async (panierDisplay) => {
             city : document.querySelector("#city").value,
             email :document.querySelector("#email").value
         }
-
       
-        //Création d'un tableau d'id
+        //Création d'un tableau d'id produit
         let products = [];
-        for (n=0; n<produit.length; n++){
+        for (n=0; n < produit.length; n++){
             products[n] = produit[n]._id;
         }
         console.log(products);
@@ -287,59 +248,37 @@ const renseignerFormulaire = async (panierDisplay) => {
         }
         console.log(donnéesAEnvoyer);
 
-        const promiseCommande = fetch("http://localhost:3000/api/products/order", {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json', 
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(donnéesAEnvoyer),
-        });
+        //Synthèse contrôle d'erreurs avant envoi effectif
+        let messageErreurPrénom = document.querySelector("#firstNameErrorMsg").textContent;
+        let messageErreurNom = document.querySelector("#lastNameErrorMsg").textContent;
+        let messageErreurAdresse = document.querySelector("#addressErrorMsg").textContent;
+        let messageErreurVille = document.querySelector("#cityErrorMsg").textContent;
+        let messageErreurEmail = document.querySelector("#emailErrorMsg").textContent;        
+        
+        if (!messageErreurPrénom && !messageErreurNom && !messageErreurAdresse && !messageErreurVille && !messageErreurEmail){
 
-        promiseCommande.then(async (response) => {
-            try {
-                console.log(response);
-                const contenu = await response.json();
-                console.log(contenu);
-                console.log(contenu.orderId);
-                window.location.href = `confirmation.html?orderId=${contenu.orderId}`;
-            } catch (e) {
-                console.log(e);
-            }
-        });
-    })
-/*
-function send(e) {
-    e.preventDefault();
-    fetch("http://localhost:3000/api/products", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(donnéesAEnvoyer),
-    })
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
-    })
-    .then(function(value) {
+            const promiseCommande = fetch("http://localhost:3000/api/products/order", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json', 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(donnéesAEnvoyer),
+            });
 
-        //<a href="./product.html?id=${kanapé._id}"></a>
-
-        window.location.href = "confirmation.html?id=${produit._id}";
-        document.getElementById("result").innerText = value.postData.text;
-    });
-  }*/
-  //console.log(produit._id);
-  
-  //document.getElementById("form").addEventListener("submit", transfert);
-  /*document.querySelector("#order").addEventListener("click", transfert);
-  function transfert(){
-    window.location.href = "./confirmation.html?id=011111111";  
-  }*/
-
-
+            promiseCommande.then(async (response) => {
+                try {
+                    console.log(response);
+                    const contenu = await response.json();
+                    console.log(contenu);
+                    console.log(contenu.orderId);
+                    window.location.href = `confirmation.html?orderId=${contenu.orderId}`;
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+        }
+    }
+}
 
 panierDisplay();

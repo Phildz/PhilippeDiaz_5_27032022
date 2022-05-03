@@ -11,47 +11,28 @@ function getBasket() {
     }
 }
 
-function addBasket(product, couleur, quantité) {
+function addBasket(product, quantité) {
     let basket = getBasket();
     let foundProduct = basket.find(p => p._id == product._id);
     if (foundProduct != undefined) {  
-        let foundProduct = basket.find(c => c.color == product.color);
+        let foundProduct = basket.find(c => c.color == product.color);        
         if (foundProduct != undefined) {        
             console.log("produits identiques");    
             foundProduct.quantity += Number(quantité);                   
         }else{
             console.log("produits différents");
-            product.quantity = Number(quantité);;
+            product.quantity = Number(quantité);
             basket.push(product);
         }        
     }else{
         console.log("produits différents");
-        product.quantity = Number(quantité);;
+        product.quantity = Number(quantité);
         basket.push(product);
     }
     saveBasket(basket);
 }
 
-/*function removeFromBasket(product){
-    let basket = getBasket();
-    basket = basket.filter(p => p.id != product.id);
-    saveBasket(basket);
-}*/
-
-/*function changeQuantity(product, quantity) {
-    let basket = getBasket();
-    let foundProduct = basket.find(p => p.id == product.id);
-    if (foundProduct != undefined) {
-        foundProduct.quantity += quantity;
-        if (foundProduct.quantity <= 0) {
-            removeFromBasket(foundProduct);
-        }else{
-            saveBasket(basket);
-        }
-    } 
-}*/
-
-function getNumberProduit() {
+function calculNombreProduit() {
     let basket = getBasket();
     let number = 0;
     for (let produit of basket) {
@@ -60,7 +41,7 @@ function getNumberProduit() {
     return number;
 }
 
-function getTotalPrice() {
+function calculPrixTotal() {
     let basket = getBasket();
     let total = 0;
     for (let produit of basket) {

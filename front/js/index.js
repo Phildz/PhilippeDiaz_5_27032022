@@ -36,6 +36,5 @@ const kanapéDisplay = async () => {
 
 };
 
-
 kanapéDisplay();
 

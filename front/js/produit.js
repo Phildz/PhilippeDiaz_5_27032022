@@ -20,20 +20,12 @@ const produitDisplay = async () => {
   affichageImage(`${produitData.imageUrl}`,`${produitData.altTxt}`);
 
   afficherInfosTexte("title", "price", "description");
+  
+  créerOptionCouleurs();
 
-  function afficherInfosTexte (title, price, description){
-    document.getElementById(title).textContent = `${produitData.name}`;
-    document.getElementById(price).textContent = `${produitData.price}`;
-    document.getElementById(description).textContent = `${produitData.description}`;
-  }
+  ajoutPanier(produitData);
   
-  
-  
-  créerOption();
-
-  ajoutPanier(produitData);   
-  
-};
+}
 
 function affichageImage(src, alt) {
   var a = document.createElement("img");
@@ -41,12 +33,17 @@ function affichageImage(src, alt) {
   a.alt = alt;    
   document.querySelector("body > main > div > section > article > div.item__img").appendChild(a);
 }
+function afficherInfosTexte (title, price, description){
+  document.getElementById(title).textContent = `${produitData.name}`;
+  document.getElementById(price).textContent = `${produitData.price}`;
+  document.getElementById(description).textContent = `${produitData.description}`;
+}
 
 /**
    * Création du code html Options dans Select en fonction de la longueur du tableau "colors"
    * renvoie les options de choix "couleur" disponibles
    */
-const créerOption = () => {
+function créerOptionCouleurs() {
   var sel = document.getElementById("colors");
   for (i=0; i < `${produitData.colors.length}`; i++){
     var opt_i = document.createElement("option");
@@ -57,27 +54,30 @@ const créerOption = () => {
 }
 
 const ajoutPanier = (produitData) => {  
-  const btn_envoyerPanier = document.getElementById("addToCart");
-  btn_envoyerPanier.addEventListener("click", () =>{ 
+  const btn_envoyerPanier = document.getElementById("addToCart");      
     
-    let select = document.getElementById("colors");    
-    let input = document.getElementById("quantity");
-    let couleur = `${select.value}`;
-    let quantité =  `${input.value}`; 
-    
-    let fusionDataProduit = Object.assign({}, produitData,{
-      color : couleur,
-      quantity : quantité
-    });
+    btn_envoyerPanier.addEventListener("click", () =>{ 
 
-    console.log(fusionDataProduit);
-    window.location.href = `cart.html?id=${idProduit}`;
+      let select = document.getElementById("colors");    
+      let input = document.getElementById("quantity");
+      let couleur = `${select.value}`;
+      let quantité =  `${input.value}`;
+      console.log("quantité =", quantité);
+      console.log("couleur =", couleur);
 
-    addBasket(fusionDataProduit, couleur, quantité);    
+      if (quantité != 0 && couleur != ""){      
+        let fusionDataProduit = Object.assign({}, produitData,{
+          color : couleur,
+          quantity : quantité
+        });
 
-  });
+        console.log(fusionDataProduit);
+        window.location.href = `cart.html?id=${idProduit}`;
 
-};
+        addBasket(fusionDataProduit, quantité);    
+      }
+    })
+}
 
 produitDisplay();
 
