@@ -1,3 +1,4 @@
+//----Création de la promesse kanapéData pour réception de données des canapés
 let kanapéData = [];
 
 const fetchKanapé = async () => {
@@ -7,9 +8,9 @@ const fetchKanapé = async () => {
       kanapéData = promise;
       console.log(kanapéData);
     });
-};
+}
 
-const kanapéDisplay = async () => {
+const affichageCanapés = async () => {
   await fetchKanapé();
 
    document.getElementById("items").innerHTML = kanapéData
@@ -34,7 +35,6 @@ const kanapéDisplay = async () => {
   let liens = document.querySelectorAll("#items > a");
   console.log(liens);
 
-};
+}
 
-kanapéDisplay();
-
+affichageCanapés()
